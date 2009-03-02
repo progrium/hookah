@@ -1,9 +1,9 @@
 import cherrypy
 import threading
 import urllib, urllib2
-import os
+import os, sys
 
-PORT = 8000
+PORT = 8000 if len(sys.argv) < 2 else int(sys.argv[1])
 RETRIES = 3
 DELAY_MULTIPLIER = 5
 
@@ -25,7 +25,7 @@ class Root:
             threading.Thread(target=post_and_retry, args=[url, cherrypy.request.params]).start()
             return "OK"
         else:
-            return "No path."
+            return "No destination."
             
 if __name__ == '__main__':
     cherrypy.config.update({'server.socket_port': PORT,})
