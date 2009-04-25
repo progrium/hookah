@@ -19,7 +19,7 @@ However, this does not scale and lacks many features common in web hook implemen
 
 Requirements
 ------------
-Hookah currently depends on CherryPy.
+Hookah currently depends on Twisted.
 
 Usage
 -----
