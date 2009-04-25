@@ -1,21 +1,17 @@
 Hookah
 ======
-The web hook event broker
+The webhook event broker
+
+Current Features
+----------------
+* Asynchronously dispatches webhook callbacks
+* Interface is 100% HTTP (use easily with any language)
+* Handles retries (very dumbly right now)
+
 
 About
 -----
-Hookah was created to ease the implementation of web hooks in your web apps. Normally, assuming you have a way for users to register callback URLs, invoking a web hook can be as trivial as this Python pseudo-code:
-
-        def some_significant_event_in_your_app(user):
-            # Actually do the event
-            results = do_significant_work(user)
-            
-            # Invoke the web hook
-            urllib.urlopen(user.hooks['some_significant_event'].url, results)
-            
-            return results
-            
-However, this does not scale and lacks many features common in web hook implementations such as retries, verification, response handling, authentication, etc. It was also assumed you had an interface to let the user define their callback URLs. Hookah aims to solve these problems so that you can implement them as easy as the above code and still get all these features.
+Hookah was created to ease the implementation of webhooks in your web apps. The simplest way to do webhooks is to do inline HTTP requests in your app to invoke the user callbacks. However, this should be asynchronous and there are various other concerns you might want to have a decent webhook system. Hookah aims to be the swiss army knife for webhook installs ... perhaps the SMTP daemon of webhooks.
 
 Requirements
 ------------
@@ -27,22 +23,20 @@ Hookah is a simple, lightweight standalone web server that you run locally along
 
         python hookah.py 8000
         
-The first argument is the port you want it to run on. Because its interface is HTTP, you can use it nearly any programming environment and invoke it using code slightly modified from the above example:
+The first argument is the port you want it to run on. Because its interface is HTTP, you can use it from nearly any programming environment and invoke it using an HTTP client (like urlopen in python):
 
-        # Invoke the web hook
-        urllib.urlopen(user.hooks['some_significant_event'].url.replace('http://', HOOKAH_BASEURL), results)
+        # Invoke the callback
+        urllib.urlopen(user.callback_url.replace('http://', 'http://localhost:8000/'), payload)
         
-The idea is that you make the same request but to Hookah, using a modified version of the URL. For example:
+The idea is that you make a request as if you were directly invoking the callback URL, but you call Hookah instead. For example, a callback of:
 
-        http://example.com/user/handler/endpoint
+        http://example.com/user/callback/endpoint
         
 Becomes:
 
-        http://localhookah/example.com/user/handler/endpoint
-        
-Where localhookah is the host for Hookah. Starting off, this might just be localhost:8000 or whatever port you put Hookah on.
+        http://localhost:8000/example.com/user/callback/endpoint
 
-Hookah will return immediately and perform the outgoing request asynchronously, also performing retries if the request fails. 
+Your request to Hookah will return immediately and perform the outgoing request asynchronously, also performing retries if the request fails.
 
 Coming Soon
 -----------
