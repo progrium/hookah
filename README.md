@@ -11,7 +11,7 @@ Current Features
 
 About
 -----
-Hookah was created to ease the implementation of webhooks in your web apps. The simplest way to do webhooks is to do inline HTTP requests in your app to invoke the user callbacks. However, this should be asynchronous and there are various other concerns you might want to have a decent webhook system. Hookah aims to be the swiss army knife for webhook installs ... perhaps the SMTP daemon of webhooks.
+Hookah was created to ease the implementation of webhooks in your web apps. The simplest way to do webhooks is to do inline HTTP requests in your app to invoke the user callbacks. However, this should be asynchronous and there are various other concerns you might want to address to have a decent webhook system. Hookah aims to be the ultimate webhook provider buddy ... perhaps the SMTP daemon of webhooks.
 
 Requirements
 ------------
