@@ -35,7 +35,11 @@ class HookahResource(Resource):
         if path in ['favicon.ico', 'robots.txt']:
             return
         
-        url = 'http://%s' % path if len(path) else request.args.get('_url', [None])[0]
+        if request.args.get('_url', None):
+            url_param = request.args.get('_url', [None])[0]
+            del request.args['_url']
+        
+        url = 'http://%s' % path if len(path) else url_param
         if url:
             post_and_retry(url, request.args)
             return "200 Scheduled"
