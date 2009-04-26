@@ -5,7 +5,7 @@ from twisted.web import client
 import urllib
 import sys
 
-PORT = 8000 if len(sys.argv) < 2 else int(sys.argv[1])
+#PORT = 8000 if len(sys.argv) < 2 else int(sys.argv[1])
 RETRIES = 3
 DELAY_MULTIPLIER = 5
 
@@ -31,15 +31,17 @@ class HookahResource(Resource):
         return HookahResource()
 
     def render(self, request):
-        if request.prepath in ['favicon.ico', 'robots.txt']:
+        path = '/'.join(request.prepath)
+        if path in ['favicon.ico', 'robots.txt']:
             return
-        if len(request.prepath):
-            url = 'http://%s' % '/'.join(request.prepath)
+        if len(path):
+            url = 'http://%s' % path
             post_and_retry(url, request.args)
             return "OK"
         else:
             return "No destination."
             
 if __name__ == '__main__':
-    reactor.listenTCP(PORT, Site(HookahResource()))
-    reactor.run()
+    pass
+#    reactor.listenTCP(PORT, Site(HookahResource()))
+#    reactor.run()

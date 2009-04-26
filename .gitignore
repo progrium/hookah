@@ -1,0 +1,4 @@
+*.pyc
+twistd.log
+twistd.pid
+twisted/plugins/dropin.cache

@@ -21,12 +21,12 @@ Usage
 -----
 Hookah is a simple, lightweight standalone web server that you run locally alongside your existing web stack. Starting it from the command line is simple:
 
-        python hookah.py 8000
+        twistd hookah --port 8080
         
 The first argument is the port you want it to run on. Because its interface is HTTP, you can use it from nearly any programming environment and invoke it using an HTTP client (like urlopen in python):
 
         # Invoke the callback
-        urllib.urlopen(user.callback_url.replace('http://', 'http://localhost:8000/'), payload)
+        urllib.urlopen(user.callback_url.replace('http://', 'http://localhost:8080/'), payload)
         
 The idea is that you make a request as if you were directly invoking the callback URL, but you call Hookah instead. For example, a callback of:
 
@@ -34,7 +34,7 @@ The idea is that you make a request as if you were directly invoking the callbac
         
 Becomes:
 
-        http://localhost:8000/example.com/user/callback/endpoint
+        http://localhost:8080/example.com/user/callback/endpoint
 
 Your request to Hookah will return immediately and perform the outgoing request asynchronously, also performing retries if the request fails.
 
