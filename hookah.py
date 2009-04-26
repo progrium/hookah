@@ -1,11 +1,10 @@
 from twisted.internet import reactor
 from twisted.web.resource import Resource
 from twisted.web.server import Site
-from twisted.web import client
+from twisted.web import client, error, http
 import urllib
 import sys
 
-#PORT = 8000 if len(sys.argv) < 2 else int(sys.argv[1])
 RETRIES = 3
 DELAY_MULTIPLIER = 5
 
@@ -32,16 +31,14 @@ class HookahResource(Resource):
 
     def render(self, request):
         path = '/'.join(request.prepath)
+        
         if path in ['favicon.ico', 'robots.txt']:
             return
-        if len(path):
-            url = 'http://%s' % path
+        
+        url = 'http://%s' % path if len(path) else request.args.get('_url', [None])[0]
+        if url:
             post_and_retry(url, request.args)
-            return "OK"
+            return "200 Scheduled"
         else:
-            return "No destination."
-            
-if __name__ == '__main__':
-    pass
-#    reactor.listenTCP(PORT, Site(HookahResource()))
-#    reactor.run()
+            request.setResponseCode(http.BAD_REQUEST)
+            return "400 No destination URL"
