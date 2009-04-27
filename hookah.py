@@ -43,7 +43,7 @@ class HookahResource(Resource):
         
         url = 'http://%s' % path if len(path) else url_param
         if url:
-            post_and_retry(url, request.args)
+            post_and_retry(url, dict(request.args))
             return "200 Scheduled"
         else:
             request.setResponseCode(http.BAD_REQUEST)
