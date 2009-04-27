@@ -35,8 +35,8 @@ class HookahResource(Resource):
         if path in ['favicon.ico', 'robots.txt']:
             return
         
-        if request.args.get('_url', None):
-            url_param = request.args.get('_url', [None])[0]
+        url_param = request.args.get('_url', [None])[0]
+        if url_param:
             del request.args['_url']
         
         url = 'http://%s' % path if len(path) else url_param
