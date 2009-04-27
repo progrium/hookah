@@ -15,11 +15,13 @@ def post_and_retry(url, params, retry=0):
         'Content-Type': 'application/x-www-form-urlencoded',
         'Content-Length': str(len(postdata)),
     }
-    client.getPage(url, method='POST' if len(postdata) else 'GET', headers=headers, postdata=postdata if len(postdata) else None).addCallbacks( \
+    client.getPage(url, followRedirect=0, method='POST' if len(postdata) else 'GET', headers=headers, postdata=postdata if len(postdata) else None).addCallbacks( \
                     if_success, lambda reason: if_fail(reason, url, params, retry))
 
 def if_success(page): pass
 def if_fail(reason, url, params, retry):
+    if reason.getErrorMessage()[0:3] in ['301', '302', '303']:
+        return # Not really a fail
     print reason.getErrorMessage()
     if retry < RETRIES:
         retry += 1
