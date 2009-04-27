@@ -46,7 +46,7 @@ class HookahResource(Resource):
             params = {}
             for k in request.args:
                 value = request.args[k]
-                if type(value) is dict and len(value) == 1:
+                if type(value) is list and len(value) == 1:
                     params[k] = value[0]
                 else:
                     params[k] = value
