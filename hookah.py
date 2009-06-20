@@ -51,7 +51,8 @@ class HookahResource(Resource):
                 else:
                     params[k] = value
             post_and_retry(url, params)
-            return "200 Scheduled"
+            request.setResponseCode(http.ACCEPTED)
+            return "202 Scheduled"
         else:
             request.setResponseCode(http.BAD_REQUEST)
             return "400 No destination URL"
