@@ -6,7 +6,7 @@ from twisted.application.service import IServiceMaker
 from twisted.application import internet
 from twisted.web.server import Site
 
-from hookah import HookahResource
+from hookah.web import HookahResource
 
 
 class Options(usage.Options):
