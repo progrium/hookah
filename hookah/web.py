@@ -1,11 +1,15 @@
 from twisted.web import client, error, http
 from twisted.web.resource import Resource
 
-import dispatch
+import dispatch, pubsub
 
 class HookahResource(Resource):
+    isLeaf = False
+    
     def getChild(self, name, request):
-        return HookahResource()
+        if name == '':
+            return self
+        return Resource.getChild(self, name, request)
 
     def render(self, request):
         path = '/'.join(request.prepath)
@@ -13,22 +17,17 @@ class HookahResource(Resource):
         if path in ['favicon.ico', 'robots.txt']:
             return
         
-        url_param = request.args.get('_url', [None])[0]
-        if url_param:
-            del request.args['_url']
+        return "TODO: Show some documentation"
+    
+    @classmethod
+    def setup(cls):
+        # These should probably go somewhere else
+        pubsub.fetch_queue.get().addCallback(pubsub.do_fetch)
+        pubsub.dispatch_queue.get().addCallback(pubsub.do_dispatch)
+        pubsub.verify_queue.get().addCallback(pubsub.do_verify)
         
-        url = 'http://%s' % path if len(path) else url_param
-        if url:
-            params = {}
-            for k in request.args:
-                value = request.args[k]
-                if type(value) is list and len(value) == 1:
-                    params[k] = value[0]
-                else:
-                    params[k] = value
-            dispatch.post_and_retry(url, params)
-            request.setResponseCode(http.ACCEPTED)
-            return "202 Scheduled"
-        else:
-            request.setResponseCode(http.BAD_REQUEST)
-            return "400 No destination URL"
+        r = cls()
+        r.putChild('dispatch', dispatch.DispatchResource())
+        r.putChild('subscribe', pubsub.SubscribeResource())
+        r.putChild('publish', pubsub.PublishResource())
+        return r

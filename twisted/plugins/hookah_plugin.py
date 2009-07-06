@@ -23,6 +23,6 @@ class HookahMaker(object):
         """
         Construct a TCPServer from a factory defined in myproject.
         """
-        return internet.TCPServer(int(options["port"]), Site(HookahResource()))
+        return internet.TCPServer(int(options["port"]), Site(HookahResource.setup()))
 
 serviceMaker = HookahMaker()
