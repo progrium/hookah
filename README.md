@@ -4,9 +4,9 @@ The webhook event broker
 
 Current Features
 ----------------
-* Asynchronously dispatches webhook callbacks
 * Interface is 100% HTTP (use easily with any language)
-* Handles retries (very dumbly right now)
+* Dispatches POST requests (webhooks) asynchronously with retry
+* Provides publish/subscribe interface using PubSubHubbub protocol (experimental)
 
 
 About
@@ -23,35 +23,31 @@ Hookah is a simple, lightweight standalone web server that you run locally along
 
         twistd hookah --port 8080
         
-The first argument is the port you want it to run on. Because its interface is HTTP, you can use it from nearly any programming environment and invoke it using an HTTP client (like urlopen in python):
+Using the Dispatcher
+--------------------
+Posting to /dispatch with a _url POST parameter will queue that POST request for that URL and return immediately. This allows you to use Hookah as an outgoing request queue that handles retries, etc. Using HTTP means you can do this easily from any language using a familiar API.
 
-        # Invoke the callback
-        urllib.urlopen(user.callback_url.replace('http://', 'http://localhost:8080/'), payload)
-        
-The idea is that you make a request as if you were directly invoking the callback URL, but you call Hookah instead. For example, a callback of:
+Using PubSub
+------------
+Refer to the PubSubHubbub spec, as Hookah is currently quite compliant with this excellent protocol. The endpoints are similar to their App Engine implementation: publish pings go to /publish, and subscription requests go to /subscribe. 
 
-        http://example.com/user/callback/endpoint
-        
-Becomes:
+**This feature is still very early** and as a result it is incomplete. The main caveat is that there is no permanent storage of subscription data or of the queues. This means if you were to restart Hookah, all subscriptions would have to be made again. 
 
-        http://localhost:8080/example.com/user/callback/endpoint
+Todo
+----
 
-Your request to Hookah will return immediately and perform the outgoing request asynchronously, also performing retries if the request fails.
-
-Coming Soon
------------
-Obviously, Hookah was designed to be the simplest solution possible. Right now, it basically performs asynchronous HTTP requests with retries using HTTP as the interface. However, this is useful for many people getting started with web hooks and Hookah will continue to provide more functionality around this core mechanism. Features coming soon (with your help?) include:
-
-1. Response handling - Hookah only works for the fire and forget usage model. If you want response data, you'll have to do synchronous requests yourself inline, or wait until we handle response handling. This includes a blocking inline response handling mode, but also an asynchronous handling mode, where Hookah provides a web hook for you to handle the responses.
-1. Verification - Hookah will keep track of outgoing requests and provide an endpoint you can expose to your users that will verify requests. This makes sure requests to users weren't spoofed, but requires your users to perform a request back to you for verification. However, this works as proven by PayPal.
-1. Event channel management and registration - Hookah will eventually manage your user callback URLs for you (using a datastore of your choice) and provide a web API you can expose to users for letting them programmatically register callbacks. This means you don't have to manage state and all your web hook implementation code can be made up of just invoking HTTP requests to Hookah. 
-1. Authentication - Hookah can provide HMAC signature authentication for you so you don't have to worry about it. 
-1. More!
+1. Persistent storage and queuing backends
+1. Configuration
+1. Async response handling
+1. HTTP streaming module
 
 Contributors
 ------------
-* Jeff Lindsay
 * you?
+
+Author
+------
+Jeff Lindsay <progrium@gmail.com>
 
 Learn more about web hooks
 --------------------------
