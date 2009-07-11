@@ -1,6 +1,7 @@
 from twisted.internet import reactor
 from twisted.web import client, error, http
 from twisted.web.resource import Resource
+from hookah import pubsub
 import urllib
 import sys
 
@@ -37,6 +38,18 @@ class DispatchResource(Resource):
         path = '/'.join(request.prepath[1:])
         
         print path
+
+        topic_param = request.args.get('_topic', [None])[0]
+        if topic_param:
+            del request.args['_topic']
+
+            data_params = urllib.urlencode(request.args, doseq=True)
+            pubsub.dispatch_queue.put({
+                'topic' : topic_param,
+                'data' : data_params,
+                'content_type' : 'application/x-www-form-urlencoded',
+                })
+            return "202 Scheduled"
         
         url_param = request.args.get('_url', [None])[0]
         if url_param:
