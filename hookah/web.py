@@ -1,7 +1,8 @@
 from twisted.web import client, error, http
 from twisted.web.resource import Resource
+from twisted.internet import task
 
-import dispatch, pubsub
+import dispatch, pubsub, stream
 
 class HookahResource(Resource):
     isLeaf = False
@@ -25,9 +26,12 @@ class HookahResource(Resource):
         pubsub.fetch_queue.get().addCallback(pubsub.do_fetch)
         pubsub.dispatch_queue.get().addCallback(pubsub.do_dispatch)
         pubsub.verify_queue.get().addCallback(pubsub.do_verify)
+        l = task.LoopingCall(stream.touch_active_sessions)
+        l.start(5, now=False)
         
         r = cls()
         r.putChild('dispatch', dispatch.DispatchResource())
         r.putChild('subscribe', pubsub.SubscribeResource())
         r.putChild('publish', pubsub.PublishResource())
+        r.putChild('stream', stream.StreamResource())
         return r

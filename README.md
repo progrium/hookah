@@ -6,7 +6,7 @@ Current Features
 ----------------
 * Interface is 100% HTTP (use easily with any language)
 * Dispatches POST requests (webhooks) asynchronously with retry
-* Provides publish/subscribe interface using PubSubHubbub protocol (experimental)
+* Provides publish/subscribe interface using [PubSubHubbub protocol](http://code.google.com/p/pubsubhubbub/) (experimental)
 
 
 About
@@ -29,7 +29,7 @@ Posting to /dispatch with a _url POST parameter will queue that POST request for
 
 Using PubSub
 ------------
-Refer to the PubSubHubbub spec, as Hookah is currently quite compliant with this excellent protocol. The endpoints are similar to their App Engine implementation: publish pings go to /publish, and subscription requests go to /subscribe. 
+Refer to the [PubSubHubbub spec](http://pubsubhubbub.googlecode.com/svn/trunk/pubsubhubbub-core-0.1.html), as Hookah is currently quite compliant with this excellent protocol. The endpoints are similar to their App Engine implementation: publish pings go to /publish, and subscription requests go to /subscribe. 
 
 **This feature is still very early** and as a result it is incomplete. The main caveat is that there is no permanent storage of subscription data or of the queues. This means if you were to restart Hookah, all subscriptions would have to be made again. 
 
