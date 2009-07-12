@@ -1,0 +1,33 @@
+body {
+    background: #888;
+    font-family: monospace;
+}
+h1 {
+    background: #8f8;
+    padding: 10px;
+}
+h2 {
+    margin-left: 15px;
+}
+dl {
+    background: #aaa;
+    padding: 10px;
+    margin-left: 30px;
+}
+dt {
+    color: #555;
+}
+span.topic {
+    color: black;
+}
+dd {
+
+}
+form {
+    padding: 10px;
+    margin-left: 30px;
+    background: #aaa;
+}
+form div {
+    padding: 2px;
+}
