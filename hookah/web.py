@@ -11,6 +11,13 @@ class HookahResource(Resource):
     def getChild(self, name, request):
         if name == '':
             return self
+        elif name == 'hub':
+            mode = request.args.get('hub.mode', [None])[0]
+            if mode in ['subscribe', 'unsubscribe']:
+                print "HELLO"
+                return pubsub.SubscribeResource()
+            elif mode == 'publish':
+                return pubsub.PublishResource()
         return Resource.getChild(self, name, request)
 
     def render(self, request):

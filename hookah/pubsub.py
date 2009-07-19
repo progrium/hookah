@@ -67,7 +67,7 @@ class SubscribeResource(Resource):
         mode        = request.args.get('hub.mode', [None])[0]
         callback    = request.args.get('hub.callback', [None])[0]
         topic       = request.args.get('hub.topic', [None])[0]
-        verify      = request.args.get('hub.verify', [None])[0]
+        verify      = request.args.get('hub.verify', [None])
         verify_token = request.args.get('hub.verify_token', [None])[0]
         
         if not mode or not callback or not topic or not verify:
@@ -78,7 +78,7 @@ class SubscribeResource(Resource):
             request.setResponseCode(http.BAD_REQUEST)
             return "400 Bad request: Unrecognized mode"
         
-        verify = verify.split(',')[0] # For now, only using the first preference of verify mode
+        verify = verify[0] # For now, only using the first preference of verify mode
         if not verify in ['sync', 'async']:
             request.setResponseCode(http.BAD_REQUEST)
             return "400 Bad request: Unsupported verification mode"
@@ -117,8 +117,8 @@ class PublishResource(Resource):
         
         if mode == 'publish':
             fetch_queue.put(url)
-            request.setResponseCode(http.ACCEPTED)
-            return "202 Fetch scheduled"
+            request.setResponseCode(http.NO_CONTENT)
+            return "204 Published"
         else:
             request.setResponseCode(http.BAD_REQUEST)
             return "400 Bad request: Unrecognized mode"

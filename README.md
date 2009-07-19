@@ -29,7 +29,7 @@ Posting to /dispatch with a _url POST parameter will queue that POST request for
 
 Using PubSub
 ------------
-Refer to the [PubSubHubbub spec](http://pubsubhubbub.googlecode.com/svn/trunk/pubsubhubbub-core-0.1.html), as Hookah is currently quite compliant with this excellent protocol. The endpoints are similar to their App Engine implementation: publish pings go to /publish, and subscription requests go to /subscribe. 
+Refer to the [PubSubHubbub spec](http://pubsubhubbub.googlecode.com/svn/trunk/pubsubhubbub-core-0.1.html), as Hookah is currently quite compliant with this excellent protocol. The hub endpoint is at /hub, but this multiplexes (based on 'hub.mode' param) between /publish for publish pings, and /subscribe for subscription requests. 
 
 **This feature is still very early** and as a result it is incomplete. The main caveat is that there is no permanent storage of subscription data or of the queues. This means if you were to restart Hookah, all subscriptions would have to be made again. 
 
