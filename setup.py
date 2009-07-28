@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
   name = "hookah",
-  version="0.9",
+  version="0.0.9",
   description="The webhook event broker",
   
   author="Jeff Lindsay",
