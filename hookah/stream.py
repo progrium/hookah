@@ -1,35 +1,33 @@
 from twisted.web import client, error, http, server
 from twisted.web.resource import Resource
+from hookah import queue
 
 # known sessions, session list
 # request gets a queue
 # buffer between main queue and request queue
 # push adds to buffer queue, adds to any request buffers
 
-listeners = {}
-
-def touch_active_sessions():
-    for topic in listeners:
-        if listeners[topic]:
-            for request in listeners[topic]:
-                request.getSession().touch()
-
-def __mk_session_exp_cb(self, sid):
-    def f():
-        print "Expired session", sid
-        del sessions[sid]
-    return f
+listeners = {} # Key: topic, Value: list of requests listening
     
-def __req_finished(whatever, sid):
-    sessions[sid] = None
 
 class StreamResource(Resource):
     isLeaf = True
     
     def render_GET(self, request):
-        session = request.getSession()
-        if session.uid not in sessions:
-            sessions[session.uid] = request
-            session.notifyOnExpire(__mk_session_exp_cb(session.uid))
-        request.notifyFinish().addBoth(__req_finished, session.uid)
+        topic = request.args.get('topic', [None])[0]
+        if not topic:
+            return "No topic"
+        if not topic in listeners:
+            listeners[topic] = []
+        request.queue = queue.Queue(lambda m: self._send(request, m))
+        listeners[topic].append(request)
+        request.setHeader('Content-Type', 'application/json')
+        request.setHeader('Transfer-Encoding', 'chunked')
+        request.notifyFinish().addBoth(self._finished, topic, request)
         return server.NOT_DONE_YET
+    
+    def _finished(self, whatever, topic, request):
+        listeners[topic].remove(request)
+
+    def _send(self, request, message):
+        request.write(message)

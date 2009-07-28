@@ -3,7 +3,7 @@ from twisted.web import client, error, http, static
 from twisted.web.resource import Resource
 from twisted.internet import task
 
-import dispatch, pubsub, stream
+from hookah import dispatch, pubsub, stream
 
 class HookahResource(Resource):
     isLeaf = False
@@ -69,11 +69,6 @@ class HookahResource(Resource):
     
     @classmethod
     def setup(cls):
-        # These should probably go somewhere else
-        pubsub.fetch_queue.get().addCallback(pubsub.do_fetch)
-        pubsub.dispatch_queue.get().addCallback(pubsub.do_dispatch)
-        pubsub.verify_queue.get().addCallback(pubsub.do_verify)
-        
         r = cls()
         r.putChild('dispatch', dispatch.DispatchResource())
         r.putChild('subscribe', pubsub.SubscribeResource())

@@ -1,7 +1,7 @@
 from twisted.internet import reactor
 from twisted.web import client, error, http
 from twisted.web.resource import Resource
-from hookah import pubsub
+from hookah import queue
 import urllib
 import sys
 
@@ -44,7 +44,7 @@ class DispatchResource(Resource):
             del request.args['_topic']
 
             data_params = urllib.urlencode(request.args, doseq=True)
-            pubsub.dispatch_queue.put({
+            queue.put('dispatch', {
                 'topic' : topic_param,
                 'data' : data_params,
                 'content_type' : 'application/x-www-form-urlencoded',

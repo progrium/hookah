@@ -1,4 +1,5 @@
 *.pyc
+_trial_temp
 twistd.log
 twistd.pid
 twisted/plugins/dropin.cache
