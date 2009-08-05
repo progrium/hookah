@@ -49,6 +49,11 @@ Todo
 1. "Errback" webhook
 1. Async response handling
 
+License
+-------
+
+Hookah is released under the MIT license, which can be found in the LICENSE file.
+
 Contributors
 ------------
 * you?
