@@ -131,7 +131,7 @@ class DispatchResource(Resource):
             if content_type == 'multipart':
                 out_type, data = encode_multipart_formdata(fields, files)
             else:
-                out_type, data = 'application/x-www-form-urlencoded', urllib.urlencode(request.args, doseq=True)
+                out_type, data = 'application/x-www-form-urlencoded', urllib.urlencode(fields, doseq=True)
             queue.put('dispatch', {
                 'topic' : topic_param,
                 'data' : data,
@@ -147,7 +147,7 @@ class DispatchResource(Resource):
             if content_type == 'multipart':
                 out_type, data = encode_multipart_formdata(fields, files)
             else:
-                out_type, data = 'application/x-www-form-urlencoded', urllib.urlencode(request.args, doseq=True)
+                out_type, data = 'application/x-www-form-urlencoded', urllib.urlencode(fields, doseq=True)
             post_and_retry(url, data, content_type=out_type)
             request.setResponseCode(http.ACCEPTED)
             return "202 Scheduled"
