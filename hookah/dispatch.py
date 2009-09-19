@@ -98,7 +98,7 @@ def post_and_retry(url, data, retry=0, content_type='application/x-www-form-urle
         'Content-Type': content_type,
         'Content-Length': str(len(data)),
     }    
-    client.getPage(url, followRedirect=0, method='POST' if len(data) else 'GET', headers=headers, postdata=data if len(data) else None).addCallbacks( \
+    client.getPage(url, method='POST' if len(data) else 'GET', headers=headers, postdata=data if len(data) else None).addCallbacks( \
                     if_success, lambda reason: if_fail(reason, url, data, retry, content_type))
 
 def if_success(page): pass
