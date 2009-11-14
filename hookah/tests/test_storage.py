@@ -2,10 +2,13 @@ from twisted.trial import unittest
 
 from hookah import storage
 
-class MemoryStorageTest(unittest.TestCase):
+class BaseStorageTest(object):
+
+    storageFactory = None
+    deletionMeaningful = True
 
     def setUp(self):
-        self.s = storage.MemoryStorage()
+        self.s = self.storageFactory()
 
         self.oneKey = self.s.put("one")
         self.twoKey = self.s.put("two")
@@ -23,10 +26,20 @@ class MemoryStorageTest(unittest.TestCase):
 
         try:
             v = self.s[self.oneKey]
-            self.fail("Expected failure, got " + v)
+            if self.deletionMeaningful:
+                self.fail("Expected failure, got " + v)
         except KeyError:
             pass
 
     def testRecent(self):
         self.assertEquals(['two', 'one'], self.s.recent())
         self.assertEquals(['two'], self.s.recent(1))
+
+class MemoryStorageTest(BaseStorageTest, unittest.TestCase):
+
+    storageFactory = storage.MemoryStorage
+
+class InlineStorageTest(BaseStorageTest, unittest.TestCase):
+
+    storageFactory = storage.InlineStorage
+    deletionMeaningful = False
