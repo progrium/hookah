@@ -21,3 +21,6 @@ class MemoryStorage(object):
 
     def __delitem__(self, key):
         del self._storage[key]
+
+instance = MemoryStorage()
+
