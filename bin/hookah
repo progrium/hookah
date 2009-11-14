@@ -2,15 +2,16 @@
 
 import sys
 from twisted.internet import reactor
-from twisted.web.server import Site
+
 from twisted.python import log
 from optparse import OptionParser
-from hookah.web import HookahResource
+
+import hookah
 
 parser = OptionParser()
-parser.add_option('--port', '-p',
-                  help="Port number for hookah's HTTP server (default 8080)",
-                  default=8080, type='int')
+parser.add_option('--config', '-c',
+                  help="Config file for Hookah",
+                  default='shisha.conf', type='str')
 parser.add_option('--verbose', '-v', help="Show http activity",
                   action="store_true")
 opts, args = parser.parse_args()
@@ -18,6 +19,6 @@ opts, args = parser.parse_args()
 if opts.verbose:
     log.startLogging(sys.stdout)
 
-reactor.listenTCP(opts.port, Site(HookahResource.setup()))
+hookah.configure(opts.config)
 reactor.run()
 
