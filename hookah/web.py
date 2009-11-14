@@ -5,6 +5,14 @@ from twisted.internet import task
 
 from hookah import dispatch
 
+class HookaRequest(object):
+
+    def __init__(self, url, headers, query, body):
+        self.url = url
+        self.headers = headers
+        self.query = query
+        self.body = body
+
 class HookahResource(Resource):
     isLeaf = False
     
