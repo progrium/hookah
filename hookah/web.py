@@ -19,7 +19,7 @@ class HookahResource(Resource):
         if path in ['favicon.ico', 'robots.txt']:
             return
 
-        return self.index()
+        return ''
 
     @classmethod
     def setup(cls):
