@@ -2,4 +2,5 @@
 _trial_temp
 twistd.log
 twistd.pid
+build
 twisted/plugins/dropin.cache
