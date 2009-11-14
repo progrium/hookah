@@ -1,9 +1,9 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
   name = "hookah",
-  version="0.0.9",
-  description="The webhook event broker",
+  version="0.1.0",
+  description="Scalable async HTTP request dispatcher",
   
   author="Jeff Lindsay",
   author_email="progrium@gmail.com",
@@ -14,4 +14,7 @@ setup(
   packages=['hookah'],
   data_files=[('twisted/plugins', ['twisted/plugins/hookah_plugin.py'])],
   scripts=['bin/hookah'],
+  install_requires = [
+      'pyyaml>=3',
+  ],
 )
