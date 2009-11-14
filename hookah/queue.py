@@ -1,32 +1,61 @@
-from twisted.internet import defer
+from twisted.internet import defer, task
 
-queues = {}
+import storage
 
-def put(name, message):
-    queues[name].put(message)
+class Consumer(object):
 
-def register(name, queue):
-    queues[name] = queue
-    
+    def __call__(self, key):
+        request = storage.instance[key]
+        # TODO:  Work
+        return defer.succeed("yay")
 
-class Queue(defer.DeferredQueue):
-    HISTORY_SIZE = 20
-    
-    def __init__(self, handler=None):
-        defer.DeferredQueue.__init__(self)
-        self.message_handler = handler
-        def f(msg):
-            self.history.append(msg)
-            if len(self.history) > self.HISTORY_SIZE:
-                self.history = self.history[1:]
-            if self.message_handler:
-                self.message_handler(msg)
-            else:
-                self.receivedMessage(msg)
-            self.get().addCallback(f)
-        self.get().addCallback(f)
-        self.history = []
-        
-    
-    def receivedMessage(self, message):
-        pass
+class Queue(object):
+
+    def submit(self, key):
+        """Submit a job by work queue key."""
+        raise NotImplementedError
+
+    def finish(self, key):
+        """Mark a job as completed."""
+        raise NotImplementedError
+
+    def retry(self, key):
+        """Retry a job."""
+        raise NotImplementedError
+
+    def startConsumers(self, n=5):
+        """Start consumers working on the queue."""
+        raise NotImplementedError
+
+class MemoryQueue(Queue):
+
+    def __init__(self, consumer=Consumer):
+        self.q = defer.DeferredQueue()
+        self.consumer = consumer
+
+    def submit(self, key):
+        self.q.put(key)
+
+    def finish(self, key):
+        del storage.instance[key]
+
+    retry = submit
+
+    def startConsumers(self, n=5):
+        @defer.inlineCallbacks
+        def f(c):
+            while True:
+                key = yield self.q.get()
+                # XXX:  Indicate success/requeue/whatever
+                try:
+                    worked = yield c(key)
+                    self.finish(key)
+                except:
+                    self.retry(key)
+
+        coop = task.Cooperator()
+        for i in range(n):
+            coop.coiterate(f(self.consumer()))
+
+instance = MemoryQueue()
+
