@@ -12,7 +12,6 @@ setup(
   classifiers=[
     ],
   packages=['hookah'],
-  data_files=[('twisted/plugins', ['twisted/plugins/hookah_plugin.py']),
-              ('hookah', ['hookah/styles.css'])],
+  data_files=[('twisted/plugins', ['twisted/plugins/hookah_plugin.py'])],
   scripts=['bin/hookah'],
 )
