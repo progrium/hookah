@@ -7,10 +7,10 @@ class MemoryStorage(object):
         self._storage = {}
         self._sequence = 0
 
-    def put(self, hookaRequest):
+    def put(self, hookahRequest):
         self._sequence += 1
-        self._storage[self._sequence] = hookaRequest
-        self._recent.appendleft(hookaRequest)
+        self._storage[self._sequence] = hookahRequest
+        self._recent.appendleft(hookahRequest)
         return self._sequence
 
     def recent(self, n=10):
