@@ -2,6 +2,7 @@
 *~
 *.pyc
 _trial_temp
+*.egg-info
 twistd.log
 twistd.pid
 build
