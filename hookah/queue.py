@@ -27,11 +27,27 @@ class Queue(object):
         """Start consumers working on the queue."""
         raise NotImplementedError
 
+    def shutDown(self):
+        """Shut down the queue."""
+        raise NotImplementedError
+
+    @defer.inlineCallbacks
+    def doTask(self, c):
+        key = yield self.q.get()
+        # XXX:  Indicate success/requeue/whatever
+        try:
+            worked = yield c(key)
+            self.finish(key)
+        except:
+            self.retry(key)
+
 class MemoryQueue(Queue):
 
     def __init__(self, consumer=Consumer):
         self.q = defer.DeferredQueue()
+        self.keepGoing = True
         self.consumer = consumer
+        self.cooperator = task.Cooperator()
 
     def submit(self, key):
         self.q.put(key)
@@ -41,21 +57,16 @@ class MemoryQueue(Queue):
 
     retry = submit
 
-    def startConsumers(self, n=5):
-        @defer.inlineCallbacks
-        def f(c):
-            while True:
-                key = yield self.q.get()
-                # XXX:  Indicate success/requeue/whatever
-                try:
-                    worked = yield c(key)
-                    self.finish(key)
-                except:
-                    self.retry(key)
+    def shutDown(self):
+        self.keepGoing = False
 
-        coop = task.Cooperator()
+    def startConsumers(self, n=5):
+        def f(c):
+            while self.keepGoing:
+                yield self.doTask(c)
+
         for i in range(n):
-            coop.coiterate(f(self.consumer()))
+            self.cooperator.coiterate(f(self.consumer()))
 
 instance = MemoryQueue()
 
